@@ -45,6 +45,10 @@ input {
 }
 
 .list {
+  margin-bottom: 2rem;
+}
+
+.element {
   margin-top: 1rem;
   text-align: start;
 }

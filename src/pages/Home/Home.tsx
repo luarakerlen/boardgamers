@@ -4,6 +4,7 @@ import { db } from '../../firebase/firebase';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
+import { Label } from '../../components/Label/Label';
 
 interface Participant {
 	name: string;
@@ -98,14 +99,16 @@ export function Home() {
 				</button>
 			</form>
 
-			<div>
+			<div className={styles.list}>
 				<h3 className={styles.text}>Participantes confirmados:</h3>
-				<ul className={styles.list}>
+				<ul className={styles.element}>
 					{participants.map((participant) => (
 						<li key={participant.phone}>{participant.name}</li>
 					))}
 				</ul>
 			</div>
+
+			<Label variant={participants.length >= 3 ? 'confirmed': 'pending'}/>
 		</main>
 	);
 }
