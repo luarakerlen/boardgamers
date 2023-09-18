@@ -1,7 +1,9 @@
 import styles from './Home.module.css';
+import { useEffect, useState } from 'react';
 import { db } from '../../firebase/firebase';
 import { addDoc, collection, getDocs } from 'firebase/firestore';
-import { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
 
 interface Participant {
 	name: string;
@@ -12,6 +14,16 @@ export function Home() {
 	const [participants, setParticipants] = useState<Participant[]>([]);
 	const [newParticipantName, setNewParticipantName] = useState('');
 	const [newParticipantPhone, setNewParticipantPhone] = useState('');
+
+	const MySwal = withReactContent(Swal);
+
+	function showDialog() {
+		MySwal.fire({
+			icon: 'success',
+			title: "Participação confirmada!",
+      html: <i>Em alguns minutos, você receberá o endereço completo via WhatsApp.</i>
+		});
+	}
 
 	async function getParticipants() {
 		try {
@@ -31,8 +43,9 @@ export function Home() {
 				name: newParticipantName,
 				phone: newParticipantPhone,
 			});
-      setNewParticipantName('');
-      setNewParticipantPhone('');
+			setNewParticipantName('');
+			setNewParticipantPhone('');
+			showDialog();
 		} catch (error) {
 			console.log('Error adding participant: ', error);
 		}
