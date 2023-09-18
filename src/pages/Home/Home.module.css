@@ -1,0 +1,50 @@
+p {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+	min-height: 100vh;
+}
+
+.information {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+input {
+  width: 70%;
+}
+
+.data {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.list {
+  margin-top: 1rem;
+  text-align: start;
+}
