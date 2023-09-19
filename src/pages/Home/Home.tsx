@@ -1,60 +1,88 @@
 import styles from './Home.module.css';
 import { useEffect, useState } from 'react';
-import { db } from '../../firebase/firebase';
-import { addDoc, collection, getDocs } from 'firebase/firestore';
+import { TiDeleteOutline } from 'react-icons/ti';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Label } from '../../components/Label/Label';
-
-interface Participant {
-	name: string;
-	phone: string;
-}
+import {
+	Participant,
+	useParticipantsManagement,
+} from '../../hooks/useParticipantsManagement';
 
 export function Home() {
-	const [participants, setParticipants] = useState<Participant[]>([]);
 	const [newParticipantName, setNewParticipantName] = useState('');
 	const [newParticipantPhone, setNewParticipantPhone] = useState('');
+	const { participants, getParticipants, addParticipant, removeParticipant } =
+		useParticipantsManagement();
 
 	const MySwal = withReactContent(Swal);
 
-	function showDialog() {
+	function showAddConfirmDialog() {
 		MySwal.fire({
 			icon: 'success',
-			title: "Participação confirmada!",
-      html: <i>Em alguns minutos, você receberá o endereço completo via WhatsApp.</i>
+			title: 'Participação confirmada!',
+			html: (
+				<i>
+					Em alguns minutos, você receberá o endereço completo via WhatsApp.
+				</i>
+			),
 		});
 	}
 
-	async function getParticipants() {
-		try {
-			const querySnapshot = await getDocs(collection(db, 'participants'));
-			const recoveredData = querySnapshot.docs.map((doc) =>
-				doc.data()
-			) as Participant[];
-			setParticipants(recoveredData);
-		} catch (error) {
-			console.log('Error getting participants: ', error);
-		}
+	function handleAddParticipant() {
+		addParticipant({
+			id: '',
+			name: newParticipantName,
+			phone: newParticipantPhone,
+		});
+		setNewParticipantName('');
+		setNewParticipantPhone('');
+		showAddConfirmDialog();
 	}
 
-	async function addParticipant() {
-		try {
-			await addDoc(collection(db, 'participants'), {
-				name: newParticipantName,
-				phone: newParticipantPhone,
-			});
-			setNewParticipantName('');
-			setNewParticipantPhone('');
-			showDialog();
-		} catch (error) {
-			console.log('Error adding participant: ', error);
-		}
+	function handleRemoveParticipant(participant: Participant) {
+		MySwal.fire({
+			title: 'Digite seu telefone:',
+			input: 'text',
+			inputAttributes: {
+				autocapitalize: 'off',
+			},
+			showCancelButton: true,
+			confirmButtonText: 'Confirmar',
+			cancelButtonText: 'Cancelar',
+			preConfirm(inputValue) {
+				if (inputValue === participant.phone) {
+					MySwal.fire({
+						title: 'Você tem certeza?',
+						text: 'Você quer remover a sua confirmação de presença?',
+						icon: 'warning',
+						showCancelButton: true,
+						confirmButtonText: 'Sim, quero remover!',
+						cancelButtonText: 'Não',
+					}).then((result) => {
+						if (result.isConfirmed) {
+							removeParticipant(participant.id);
+							MySwal.fire(
+								'Removido!',
+								'Você foi removido desse evento',
+								'success'
+							);
+						}
+					});
+				} else {
+					MySwal.fire({
+						title: 'Telefone incorreto!',
+						text: 'Você digitou o telefone errado, tente novamente.',
+						icon: 'error',
+					});
+				}
+			},
+		});
 	}
 
 	useEffect(() => {
 		getParticipants();
-	}, [participants]);
+	}, []);
 
 	return (
 		<main className={styles.main}>
@@ -94,21 +122,29 @@ export function Home() {
 					/>
 				</div>
 
-				<button type='reset' onClick={addParticipant}>
+				<button type='reset' onClick={handleAddParticipant}>
 					Confirmar participação
 				</button>
 			</form>
 
-			<div className={styles.list}>
+			<div className={styles.listContainer}>
 				<h3 className={styles.text}>Participantes confirmados:</h3>
-				<ul className={styles.element}>
+				<ul className={styles.list}>
 					{participants.map((participant) => (
-						<li key={participant.phone}>{participant.name}</li>
+						<li key={participant.id} className={styles.listElement}>
+							<p>{participant.name}</p>
+							<button
+								className={styles.elementButton}
+								onClick={() => handleRemoveParticipant(participant)}
+							>
+								<TiDeleteOutline size={20} />
+							</button>
+						</li>
 					))}
 				</ul>
 			</div>
 
-			<Label variant={participants.length >= 3 ? 'confirmed': 'pending'}/>
+			<Label variant={participants.length >= 3 ? 'confirmed' : 'pending'} />
 		</main>
 	);
 }

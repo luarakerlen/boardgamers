@@ -44,11 +44,25 @@ input {
   gap: 1rem;
 }
 
-.list {
+.listContainer {
   margin-bottom: 2rem;
 }
 
-.element {
+.list {
   margin-top: 1rem;
   text-align: start;
+}
+
+.listElement {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.elementButton {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  line-height: 0;
 }
