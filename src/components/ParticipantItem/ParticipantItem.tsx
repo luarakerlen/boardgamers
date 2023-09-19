@@ -19,7 +19,7 @@ export function ParticipantItem({
 		<ParticipantItemContainer>
 			<ParticipantName>{participant.name}</ParticipantName>
 			<RemoveButton onClick={() => handleRemoveParticipant(participant)}>
-				<TiDeleteOutline size={24} />
+				<TiDeleteOutline size={24} color="white" />
 			</RemoveButton>
 		</ParticipantItemContainer>
 	);

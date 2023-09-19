@@ -12,6 +12,7 @@ export const ParticipantItemContainer = styled.div`
 export const ParticipantName = styled.p`
 	font-size: 18px;
 	font-weight: 600;
+  color: #fff;
 `;
 
 export const RemoveButton = styled.button`

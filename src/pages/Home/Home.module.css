@@ -34,13 +34,15 @@ ul {
 }
 
 input {
-  width: 70%;
+  width: 65%;
+  padding:0.5rem;
 }
 
 .data {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 1rem;
 }
 
