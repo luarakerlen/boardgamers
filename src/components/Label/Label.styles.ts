@@ -5,7 +5,7 @@ interface LabelContainerProps {
 }
 
 export const LabelContainer = styled.div<LabelContainerProps>`
-  min-width: 80%;
+  width: calc(100% - 2rem);
   padding: 0.5rem 1rem;
   background-color: ${({ variant }) => {
     switch (variant) {

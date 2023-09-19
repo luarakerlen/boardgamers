@@ -1,24 +1,21 @@
 import styles from './Home.module.css';
 import { useEffect, useState } from 'react';
-import { TiDeleteOutline } from 'react-icons/ti';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 import { Label } from '../../components/Label/Label';
-import {
-	Participant,
-	useParticipantsManagement,
-} from '../../hooks/useParticipantsManagement';
+import { useParticipantsManagement } from '../../hooks/useParticipantsManagement';
+import { ParticipantItem } from '../../components/ParticipantItem/ParticipantItem';
+import { Participant } from '../../interfaces';
 
 export function Home() {
 	const [newParticipantName, setNewParticipantName] = useState('');
 	const [newParticipantPhone, setNewParticipantPhone] = useState('');
 	const { participants, getParticipants, addParticipant, removeParticipant } =
 		useParticipantsManagement();
-
-	const MySwal = withReactContent(Swal);
+	const Dialog = withReactContent(Swal);
 
 	function showAddConfirmDialog() {
-		MySwal.fire({
+		Dialog.fire({
 			icon: 'success',
 			title: 'Participação confirmada!',
 			html: (
@@ -41,7 +38,7 @@ export function Home() {
 	}
 
 	function handleRemoveParticipant(participant: Participant) {
-		MySwal.fire({
+		Dialog.fire({
 			title: 'Digite seu telefone:',
 			input: 'text',
 			inputAttributes: {
@@ -52,7 +49,7 @@ export function Home() {
 			cancelButtonText: 'Cancelar',
 			preConfirm(inputValue) {
 				if (inputValue === participant.phone) {
-					MySwal.fire({
+					Dialog.fire({
 						title: 'Você tem certeza?',
 						text: 'Você quer remover a sua confirmação de presença?',
 						icon: 'warning',
@@ -62,7 +59,7 @@ export function Home() {
 					}).then((result) => {
 						if (result.isConfirmed) {
 							removeParticipant(participant.id);
-							MySwal.fire(
+							Dialog.fire(
 								'Removido!',
 								'Você foi removido desse evento',
 								'success'
@@ -70,7 +67,7 @@ export function Home() {
 						}
 					});
 				} else {
-					MySwal.fire({
+					Dialog.fire({
 						title: 'Telefone incorreto!',
 						text: 'Você digitou o telefone errado, tente novamente.',
 						icon: 'error',
@@ -127,21 +124,15 @@ export function Home() {
 				</button>
 			</form>
 
+			<h3 className={styles.text}>Participantes confirmados:</h3>
 			<div className={styles.listContainer}>
-				<h3 className={styles.text}>Participantes confirmados:</h3>
-				<ul className={styles.list}>
-					{participants.map((participant) => (
-						<li key={participant.id} className={styles.listElement}>
-							<p>{participant.name}</p>
-							<button
-								className={styles.elementButton}
-								onClick={() => handleRemoveParticipant(participant)}
-							>
-								<TiDeleteOutline size={20} />
-							</button>
-						</li>
-					))}
-				</ul>
+				{participants.map((participant) => (
+					<ParticipantItem
+					key={participant.id}
+					participant={participant}
+					handleRemoveParticipant={handleRemoveParticipant}
+				/>
+				))}
 			</div>
 
 			<Label variant={participants.length >= 3 ? 'confirmed' : 'pending'} />

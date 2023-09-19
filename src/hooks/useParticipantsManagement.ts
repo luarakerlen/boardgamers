@@ -7,12 +7,7 @@ import {
 	deleteDoc,
 	doc,
 } from 'firebase/firestore';
-
-export interface Participant {
-	id: string;
-	name: string;
-	phone: string;
-}
+import { Participant } from '../interfaces';
 
 export function useParticipantsManagement() {
 	const [participants, setParticipants] = useState<Participant[]>([]);
